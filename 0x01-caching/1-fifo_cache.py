@@ -5,11 +5,14 @@ BaseCaching = __import__('base_caching').BaseCaching
 
 
 class FIFOCache(BaseCaching):
+    """Fifo caching"""
 
     def __init__(self):
+        """ Initializer """
         super().__init__()
-    
+
     def put(self, key, item):
+        """Discarding the first item put in cache(FIFO algorithm)"""
         if key is None or item is None:
             pass
         else:
@@ -19,7 +22,7 @@ class FIFOCache(BaseCaching):
                 self.cache_data.pop(first_key)
                 print('DISCARD: {}'.format(first_key))
             self.cache_data[key] = item
-    
+
     def get(self, key):
         """ Must return the value in self.cache_date linked to key
         """
