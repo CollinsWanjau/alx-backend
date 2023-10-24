@@ -8,10 +8,9 @@ class LIFOCache(BaseCaching):
     """ LIFO Caching
     """
 
-
     def __init__(self):
         super().__init__()
-    
+
     def put(self, key, item):
         """ Discard the last item put in cache (LIFO algorithm)
         """
@@ -23,7 +22,7 @@ class LIFOCache(BaseCaching):
                 last_key, last_item = self.cache_data.popitem()
                 print('DISCARD: {}'.format(last_key))
             self.cache_data[key] = item
-    
+
     def get(self, key):
         """ Must return the value in self.cache_date linked to key
         """
