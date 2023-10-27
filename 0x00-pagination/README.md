@@ -16,6 +16,44 @@ The function should return a tuple of size two containing a start index and an e
 
 - Page numbers are 1-indexed, i.e. the first page is page 1.
 
+### [1. Simple pagination](./1-simple_pagination.py)
+
+Copy `index_range` from the previous task and the following class into your code:
+
+Implement a method named `get_page` that takes two integer arguments `page` with default value `1` and `page_size` with default value `10`.
+
+- You have to use this CSV file (same as the one presented at the top of the project)
+- Use assert to verify that both arguments are integers greater than 0.
+- Use `index_range` to find the correct indexes to paginate the dataset correctly and return the appropriate page of the dataset (i.e. the correct list of rows).
+- If the input arguments are out of range for the dataset, an empty list should be returned.
+
+### [2. Hypermedia pagination](./2-hypermedia_pagination.py)
+
+Implement a `get_hyper` method that takes the same arguments (and defaults) as `get_page` and returns a dictionary containing the following key-value pairs:
+
+- `page_size`: the length of the returned dataset page
+- `page`: the current page number
+- `data`: the dataset page (equivalent to return from previous task)
+- `next_page`: number of the next page, `None` if no next page
+- `prev_page`: number of the previous page, `None` if no previous page
+- `total_pages`: the total number of pages in the dataset as an integer
+
+### [3. Deletion-resilient hypermedia pagination](./3-hypermedia_del_pagination.py)
+
+The goal here is that if between two queries, certain rows are removed from the dataset, the user does not miss items from dataset when changing page.
+
+Implement a `get_hyper_index` method with two integer arguments: `index` with a default value of `0` and `page_size` with a default value of `10`.
+
+The method should return a dictionary containing the following key-value pairs:
+
+- `index`: the current start index of the return page. That is the index of the first item in the current page. For example if requesting page 3 with page_size 20, and no data was removed from the dataset, the current index should be 60.
+- `next_index`: the next index to query with. That should be the index of the first item after the last item on the current page.
+- `page_size`: the current page size
+- `data`: the actual page of the dataset
+
+- Use assert to verify that index is in a valid range.
+- If the user queries index 0, page_size 10, they will get rows indexed 0 to 9 included.
+- If they request the next index (10) with page_size 10, but rows 3, 6 and 7 were deleted, the user should still receive rows indexed 10 to 19 included.
 
 
 # REST API Design: Filtering, Sorting, and Pagination
@@ -144,3 +182,65 @@ SELECT * FROM items WHERE email > AFTER_EMAIL OR (email = AFTER_EMAIL AND id > 2
 - `GET /users?sort_by=email.asc` and `GET /users?sort_by=email.desc` would sort by email ascending and descending respectively.
 
 - `GET /users?sort_by=email&email&order_by=asc` and `GET /users?sort_by=email&order_by=desc`.
+
+# HATEOAS
+
+- `Hypermedia as the Engine of Application State` is a constraint of the REST application architecture that distinguishes it from other network application architectures.
+
+### Example
+
+- A user-agent makes an HTTP request to a REST API through an entry point URL. All subsequent requests the user-agent may make are discovered inside the response to each request. The media types used for these representations, and the link relations they may contain, are part of the API. The client transitions through application states by selecting from the links within a representation or by manipulating the representation in other ways afforded by its media type. In this way, RESTful interaction is driven by hypermedia, rather than out-of-band information
+
+- For example, this GET request fetches an account resource, requesting details in a JSON representation:
+
+```http
+GET /accounts/12345 HTTP/1.1
+Host: bank.example.org
+```
+- The response includes a representation of the account, including its current balance and available funds, and a list of links:
+
+```http
+HTTP/1.1 200 OK
+
+{
+    "account": {
+        "account_number": 12345,
+        "balance": {
+            "currency": "usd",
+            "value": 100.00
+        },
+        "links": {
+            "deposit": "/accounts/12345/deposit",
+            "withdraw": "/accounts/12345/withdraw",
+            "transfer": "/accounts/12345/transfer",
+            "close": "/accounts/12345/close"
+        }
+    }
+}
+```
+
+- The response contains these possible follow-up links:
+
+    - `deposit` - to deposit funds to the account
+    - `withdraw` - to withdraw funds from the account
+    - `transfer` - to transfer funds to another account
+    - `close` - to close the account
+
+- As an example, later, after the account has been overdrawn, there is a set of available links:
+
+```http
+HTTP/1.1 200 OK
+
+{
+    "account": {
+        "account_number": 12345,
+        "balance": {
+            "currency": "usd",
+            "value": -25.00
+        },
+        "links": {
+            "deposit": "/accounts/12345/deposit"
+        }
+    }
+}
+```
