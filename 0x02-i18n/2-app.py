@@ -35,6 +35,7 @@ def get_locale():
     """
     return request.accept_languages.best_match(app.config['LANGAUAGES'])
 
+
 @app.route('/')
 def hello_world():
     """_summary_
