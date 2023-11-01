@@ -37,6 +37,7 @@ def get_locale():
 
 # babel.init_app(app, locale_selector=get_locale)
 
+
 @app.route('/')
 def hello_world():
     """_summary_
