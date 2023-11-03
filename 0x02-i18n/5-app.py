@@ -34,20 +34,22 @@ users = {
 
 
 def get_user():
+    """ returns a user dictionary or None if the ID cannot be found
+    """
     login_id = request.args.get('login_as')
-    if login_id is None:
-        return None
-    user_id = int(login_id)
-    if user_id not in users:
-        return None
-    return users[user_id]
+    # if login_id is None:
+     #   return None
+    # user_id = int(login_id)
+    # if user_id not in users:
+      #  return None
+    # return users[user_id]
+    if login_id:
+        return users.get(int(login_id))
+    return None
 
 
 @app.before_request
-def before_request():
-    """
-    Used to reigster a function to run before each request.
-    """
+def before_request(): 
     g.user = get_user()
 
 
