@@ -37,23 +37,17 @@ def get_user():
     """ returns a user dictionary or None if the ID cannot be found
     """
     login_id = request.args.get('login_as')
-    # if login_id is None:
-     #   return None
-    # user_id = int(login_id)
-    # if user_id not in users:
-      #  return None
-    # return users[user_id]
     if login_id:
         return users.get(int(login_id))
     return None
 
 
 @app.before_request
-def before_request(): 
+def before_request():
     g.user = get_user()
 
 
-# @babel.localeselector
+@babel.localeselector
 def get_locale():
     """Determine the best match with supported languages
 
@@ -66,7 +60,7 @@ def get_locale():
         return request.accept_languages.best_match(app.config['LANGUAGES'])
 
 
-babel.init_app(app, locale_selector=get_locale)
+# babel.init_app(app, locale_selector=get_locale)
 
 
 @app.route('/')
