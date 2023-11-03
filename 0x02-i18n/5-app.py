@@ -45,10 +45,13 @@ def get_user():
 
 @app.before_request
 def before_request():
+    """
+    Used to reigster a function to run before each request.
+    """
     g.user = get_user()
 
 
-@babel.localeselector
+# @babel.localeselector
 def get_locale():
     """Determine the best match with supported languages
 
@@ -61,7 +64,7 @@ def get_locale():
         return request.accept_languages.best_match(app.config['LANGUAGES'])
 
 
-# babel.init_app(app, locale_selector=get_locale)
+babel.init_app(app, locale_selector=get_locale)
 
 
 @app.route('/')
