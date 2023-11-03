@@ -32,6 +32,7 @@ users = {
     4: {"name": "Teletubby", "locale": None, "timezone": "Europe/London"},
 }
 
+
 def get_user():
     login_id = request.args.get('login_as')
     if login_id is None:
@@ -41,12 +42,13 @@ def get_user():
         return None
     return users[user_id]
 
+
 @app.before_request
 def before_request():
     g.user = get_user()
 
 
-# @babel.localeselector
+@babel.localeselector
 def get_locale():
     """Determine the best match with supported languages
 
@@ -58,7 +60,8 @@ def get_locale():
     else:
         return request.accept_languages.best_match(app.config['LANGUAGES'])
 
-babel.init_app(app, locale_selector=get_locale)
+
+# babel.init_app(app, locale_selector=get_locale)
 
 
 @app.route('/')
