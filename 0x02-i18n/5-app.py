@@ -44,6 +44,7 @@ def get_user():
 
 @app.before_request
 def before_request():
+    """Before request"""
     g.user = get_user()
 
 
